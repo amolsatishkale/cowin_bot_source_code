@@ -1,0 +1,9 @@
+website_link: https://www.cowin.gov.in/home
+
+search_bar: //input[@placeholder='Enter your PIN']
+search_button: //button[contains(text(), 'Search')]
+
+slots: //h5[contains(translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'), "{}")]//parent::div//parent::div//following-sibling::div//ul//li
+slot: //h5[contains(translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'), "{}")]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/a
+
+
