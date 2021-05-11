@@ -22,6 +22,15 @@ def alarm():
         time.sleep(1)
 
 
+def get_valid_center_names(user_inputs, valid_values):
+    result = []
+    for user_input in user_inputs:
+        for valid_value in valid_values:
+            if str(user_input).upper() in str(valid_value).upper():
+                result.append(str(valid_value).upper())
+    return result
+
+
 if __name__ == '__main__':
     freeze_support()
 
@@ -34,10 +43,13 @@ if __name__ == '__main__':
         config = safe_load(config_file)
 
     driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver.implicitly_wait(15)
     driver.get(linker['website_link'])
 
+    print('config:', config)
     while True:
         for pin in config:
+            valid_center_names = []
             # search zip code
             search = driver.find_element_by_xpath(linker['search_bar'])
             search.send_keys(pin)
@@ -47,11 +59,17 @@ if __name__ == '__main__':
             search_button.click()
 
             # loop over all centers
-            for center in config[pin]:
+            center_names = driver.find_elements_by_class_name('center-name-title')
+            all_center_names = [center_name.text for center_name in center_names]
+
+            # get valid center names
+            valid_center_names = get_valid_center_names(user_inputs=config[pin], valid_values=all_center_names)
+
+            for center in valid_center_names:
                 center = str(center).upper()
                 print(f"Center: {center} - {str(pin)} - ({datetime.now().strftime('%d-%m-%Y, %H:%M:%S')})")
+
                 # loop over all slots
-                time.sleep(10)
                 slots = driver.find_elements_by_xpath(linker['slots'].format(center))
 
                 for i in range(1, len(slots) + 1):
@@ -70,6 +88,5 @@ if __name__ == '__main__':
                             driver.quit()
                             sys.exit()
                 print()
-                time.sleep(10)
             driver.refresh()
     # driver.quit()
