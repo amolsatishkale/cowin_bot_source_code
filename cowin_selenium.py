@@ -46,10 +46,8 @@ if __name__ == '__main__':
     driver.implicitly_wait(15)
     driver.get(linker['website_link'])
 
-    print('config:', config)
     while True:
         for pin in config:
-            valid_center_names = []
             # search zip code
             search = driver.find_element_by_xpath(linker['search_bar'])
             search.send_keys(pin)
