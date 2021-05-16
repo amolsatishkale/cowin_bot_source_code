@@ -3,7 +3,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 from pathlib import Path
 from yaml import safe_load
-from datetime import datetime, timedelta
 import sys
 import pygame
 from multiprocessing import Process, freeze_support
@@ -27,7 +26,8 @@ def get_valid_center_names(user_inputs, valid_values):
     for user_input in user_inputs:
         for valid_value in valid_values:
             if str(user_input).upper() in str(valid_value).upper():
-                result.append(str(valid_value).upper())
+                temp = str(valid_value).upper()
+                result.append(temp.replace(' PAID', ''))
     return result
 
 
@@ -56,35 +56,83 @@ if __name__ == '__main__':
             search_button = driver.find_element_by_xpath(linker['search_button'])
             search_button.click()
 
-            # loop over all centers
-            center_names = driver.find_elements_by_class_name('center-name-title')
-            all_center_names = [center_name.text for center_name in center_names]
+            # # loop over all centers
+            # center_names = driver.find_elements_by_class_name('center-name-title')
+            # all_center_names = [center_name.text for center_name in center_names]
+            #
+            # # get valid center names
+            # valid_center_names = get_valid_center_names(user_inputs=config[pin], valid_values=all_center_names)
 
-            # get valid center names
-            valid_center_names = get_valid_center_names(user_inputs=config[pin], valid_values=all_center_names)
+            # loop over 7 days until slots runs out
+            slots_available = True
 
-            for center in valid_center_names:
-                center = str(center).upper()
-                print(f"Center: {center} - {str(pin)} - ({datetime.now().strftime('%d-%m-%Y, %H:%M:%S')})")
+            while slots_available:
+                # loop over all centers
+                center_names = driver.find_elements_by_class_name('center-name-title')
+                all_center_names = [center_name.text for center_name in center_names]
 
-                # loop over all slots
-                slots = driver.find_elements_by_xpath(linker['slots'].format(center))
+                # get valid center names
+                valid_center_names = get_valid_center_names(user_inputs=config[pin], valid_values=all_center_names)
 
-                for i in range(1, len(slots) + 1):
-                    slot = driver.find_element_by_xpath(linker['slot'].format(center, i))
-                    date = datetime.now() + timedelta(days=i - 1)
-                    print(f"{date.strftime('%d-%m-%Y')} - Status: {slot.text}")
-                    if slot.text != 'NA' and slot.text != 'Booked':
-                        print('Slot Available!!!')
-                        # define alarm child process
-                        alarm_process = Process(target=alarm)
-                        alarm_process.start()
-                        time.sleep(5)
-                        input_value = input('Continue Monitoring For slots (Y/N)? : ')
-                        alarm_process.terminate()
-                        if str(input_value).upper() != 'Y':
-                            driver.quit()
-                            sys.exit()
-                print()
+                # find date range
+                date_slider_elements = driver.find_elements_by_xpath(linker['slider']['visible_elements'])
+                date_slider_elements_length = len(date_slider_elements)
+
+                # print date range
+                start_date_element = driver.find_element_by_xpath(linker['slider']['day'].format(1))
+                end_date_element = driver.find_element_by_xpath(
+                    linker['slider']['day'].format(str(date_slider_elements_length)))
+                print(f"Date Range: {start_date_element.text} to {end_date_element.text}")
+
+                while True:
+                    # check if error message visible (len == 2)
+                    error = driver.find_elements_by_xpath(linker['error'])
+                    if len(error) == 2:
+                        slots_available = False
+                        break
+
+                    # check if slot rows visible (len(div) != 0)
+                    slot_rows = driver.find_elements_by_xpath(linker['slot_rows'])
+                    if len(slot_rows) != 0:
+                        # print('break - slots found')
+                        break
+
+                if not slots_available:
+                    print('Slots not available!')
+                    print()
+                    break
+
+                for center in valid_center_names:
+                    center = str(center).upper()
+                    # print(f"Center: {center} - {str(pin)} - ({datetime.now().strftime('%d-%m-%Y, %H:%M:%S')})")
+                    print(f"Center: {center} - {str(pin)}")
+
+                    for i in range(1, date_slider_elements_length + 1):
+                        # read date and year
+                        slot_date_element = driver.find_element_by_xpath(linker['slider']['day'].format(i))
+                        slot_date = slot_date_element.text
+
+                        slot = driver.find_element_by_xpath(linker['slot'].format(center, i))
+                        slot_status = slot.text
+
+                        print(f"{str(slot_date)} - Status: {slot_status}")
+                        if slot_status != 'NA' and slot_status != 'Booked':
+                            print('Slot Available!!!')
+                            # define alarm child process
+                            alarm_process = Process(target=alarm)
+                            alarm_process.start()
+                            time.sleep(5)
+                            input_value = input('Continue Monitoring For slots (Y/N)? : ')
+                            alarm_process.terminate()
+                            if str(input_value).upper() != 'Y':
+                                driver.quit()
+                                sys.exit()
+                    print()
+
+                # click on next button, to check next 7 days
+                next_button = driver.find_element_by_xpath(linker['slider']['next_button'])
+                next_button.click()
             driver.refresh()
+        print('--------------------------------------')
+        print()
     # driver.quit()

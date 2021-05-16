@@ -3,7 +3,16 @@ website_link: https://www.cowin.gov.in/home
 search_bar: //input[@placeholder='Enter your PIN']
 search_button: //button[contains(text(), 'Search')]
 
-slots: //h5[contains(translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'), "{}")]//parent::div//parent::div//following-sibling::div//ul//li
-slot: //h5[contains(translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'), "{}")]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/a
+slots: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]//parent::div//parent::div//following-sibling::div//ul//li
+slot: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/a
 
+slider:
+  visible_elements: //slide[@aria-hidden='false']
+  day: //slide[@aria-hidden='false'][{}]/div/li/a/p
+  year: //slide[@aria-hidden='false'][{}]/div/li/a/p/span
+  next_button: //a[@class="right carousel-control carousel-control-next"]
+  back _button: //a[@class="left carousel-control carousel-control-prev"]
 
+# if slot_rows == 2, no slots available
+error: //div[@class='mat-main-field center-main-field']/div
+slot_rows: //div[@class='mat-main-field center-main-field']/div/div
