@@ -1,17 +1,29 @@
-website_link: https://www.cowin.gov.in/home
+website_link: https://www.cowin.gov.in/
+
+search_by_pin_tab: //div[contains(text(), "Search by PIN")]//parent::div[@role='tab']
 
 search_bar: //input[@placeholder='Enter your PIN']
 search_button: //button[contains(text(), 'Search')]
 
-slots: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]//parent::div//parent::div//following-sibling::div//ul//li
-slot: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/a
+#filter buttons:
+age_18: (//label[contains(text(), " Age 18+ ")]//parent::div)[2]
+age_45: (//label[contains(text(), " Age 45+ ")]//parent::div)[2]
+covishield: (//label[contains(text(), " Covishield ")]//parent::div)[2]
+covaxin: (//label[contains(text(), " Covaxin ")]//parent::div)[2]
+sputnik_v: (//label[contains(text(), " Sputnik V ")]//parent::div)[2]
+free: (//label[contains(text(), " Free ")]//parent::div)[2]
+paid: (//label[contains(text(), " Paid ")]//parent::div)[2]
+
+slots: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/div
+available_slot: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/div/a
+na_booked_slot: //h5[translate(text(), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ') = " {} "]/parent::div/parent::div/following-sibling::div/ul/li[{}]/div/div/a
 
 slider:
   visible_elements: //slide[@aria-hidden='false']
   day: //slide[@aria-hidden='false'][{}]/div/li/a/p
   year: //slide[@aria-hidden='false'][{}]/div/li/a/p/span
-  next_button: //a[@class="right carousel-control carousel-control-next"]
-  back _button: //a[@class="left carousel-control carousel-control-prev"]
+  next_button: //span[contains(text(), 'Next')]//parent::a
+  back _button: //span[contains(text(), 'Previous')]//parent::a
 
 # if slot_rows == 2, no slots available
 error: //div[@class='mat-main-field center-main-field']/div

@@ -1,4 +1,12 @@
-selenium
-webdriver_manager
-pygame
-pyyaml
+certifi==2020.12.5
+chardet==4.0.0
+colorama==0.4.4
+configparser==5.0.2
+crayons==0.4.0
+idna==2.10
+pygame==2.0.1
+PyYAML==5.4.1
+requests==2.25.1
+selenium==3.141.0
+urllib3==1.26.4
+webdriver-manager==3.4.1

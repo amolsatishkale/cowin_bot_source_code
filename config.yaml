@@ -1,6 +1,14 @@
-416012:
-  - phirangai
-  - GANGA PRAKASH HOSPITAL KOL
-416216:
-  - kagal
-  - SIDHNERLI
+filter:
+  age_18: N
+  age_45: N
+  covishield: N
+  covaxin: N
+  sputnik_v: N
+  free: N
+  paid: N
+pin:
+  416410:
+    - SAMATANAGAR UPHC COVISHIELD
+    - KHANDERAJURI PHC
+  416416:
+
